@@ -1,0 +1,8 @@
+<ips:template parameters="$forumId" />
+{{if !isset( \IPS\Settings::i()->editorMessage_forums ) || !in_array( $forumId, explode( ',', \IPS\Settings::i()->editorMessage_forums ) )}}
+    {{if in_array( \IPS\Member::loggedIn()->member_group_id, explode( ',', \IPS\Settings::i()->editorMessage_groups ) ) || \IPS\Settings::i()->editorMessage_groups == 'all'}}
+        <div class="ipsMessage ipsMessage_{setting="editorMessage_type"} editorMessage">
+            {lang="editorMessage_messageContentLang"}
+        </div>
+    {{endif}}
+{{endif}}

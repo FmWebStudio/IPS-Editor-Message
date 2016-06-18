@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin name="Editor Message" version_long="30000" version_human="3.0.0" author="Fm Web (Recouse)" website="http://fm-web.studio" update_check=""><hooks><hook type="S" class="\IPS\Theme\class_forums_front_topics" filename="fmwHook_editorMessage"><![CDATA[//<?php
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	exit;
+}
+
+class hook15 extends _HOOK_CLASS_
+{
+
+/* !Hook Data - DO NOT REMOVE */
+public static function hookData() {
+ return array_merge_recursive( array (
+  'topic' => 
+  array (
+    0 => 
+    array (
+      'selector' => 'div[itemtype=\'http://schema.org/Question\'] > div[data-controller=\'core.front.core.commentFeed,forums.front.topic.view, core.front.core.ignoredComments\'] > div[data-role=\'replyArea\'].cTopicPostArea.ipsBox.ipsBox_transparent.ipsAreaBackground.ipsPad.ipsSpacer_top',
+      'type' => 'add_inside_start',
+      'content' => '{template="editorMessage" group="plugins" location="global" app="core" params="$topic->forum_id"}',
+    ),
+  ),
+), parent::hookData() );
+}
+/* End Hook Data */
+
+
+}
+]]></hook></hooks><settings><setting><key>editorMessage_messageContent</key><default/></setting><setting><key>editorMessage_type</key><default/></setting><setting><key>editorMessage_groups</key><default/></setting><setting><key>editorMessage_forums</key><default/></setting></settings><settingsCode><![CDATA[//<?php
+
+$form->add( new \IPS\Helpers\Form\Translatable( 'editorMessage_messageContent', NULL, TRUE, array( 'app' => 'core', 'key' => 'editorMessage_messageContentLang', 'editor' => array( 'app' => 'core', 'key' => 'Admin', 'autoSaveKey' => 'editorMessage_messageContent', 'minimize' => 'editorMessage_messageContentPlaceholder' ) ) ) );
+$form->add( new \IPS\Helpers\Form\Select( 'editorMessage_type', \IPS\Settings::i()->editorMessage_type, FALSE, array( 'options' => array( 'information' => 'editorMessage_typeInformation', 'success' => 'editorMessage_typeSuccess', 'warning' => 'editorMessage_typeWarning', 'error' => 'editorMessage_typeError' ) ) ) );
+$form->add( new \IPS\Helpers\Form\Select( 'editorMessage_groups', \IPS\Settings::i()->editorMessage_groups == 'all' ? "all" : explode( ',', \IPS\Settings::i()->editorMessage_groups ), FALSE, array( 'options' => \IPS\Member\Group::groups( TRUE ), 'parse' => 'normal', 'multiple' => true, 'unlimited' => 'all', 'unlimitedLang' => 'all_groups' ), NULL, NULL, NULL, 'editorMessage_groups' ) );
+$form->add( new \IPS\Helpers\Form\Node( 'editorMessage_forums', isset( \IPS\Settings::i()->editorMessage_forums ) ? \IPS\Settings::i()->editorMessage_forums : 0, FALSE, array( 'class' => '\IPS\forums\Forum', 'permissionCheck' => 'view', 'multiple' => true ) ) );
+
+if ( $values = $form->values() )
+{
+	$form->saveAsSettings();
+    \IPS\Lang::saveCustom( 'core', 'editorMessage_messageContentLang', $values['editorMessage_messageContent'] );
+    
+	return TRUE;
+}
+
+return $form;]]></settingsCode><htmlFiles><html filename="editorMessage.phtml">PGlwczp0ZW1wbGF0ZSBwYXJhbWV0ZXJzPSIkZm9ydW1JZCIgLz4NCnt7aWYgIWlzc2V0KCBcSVBTXFNldHRpbmdzOjppKCktPmVkaXRvck1lc3NhZ2VfZm9ydW1zICkgfHwgIWluX2FycmF5KCAkZm9ydW1JZCwgZXhwbG9kZSggJywnLCBcSVBTXFNldHRpbmdzOjppKCktPmVkaXRvck1lc3NhZ2VfZm9ydW1zICkgKX19DQogICAge3tpZiBpbl9hcnJheSggXElQU1xNZW1iZXI6OmxvZ2dlZEluKCktPm1lbWJlcl9ncm91cF9pZCwgZXhwbG9kZSggJywnLCBcSVBTXFNldHRpbmdzOjppKCktPmVkaXRvck1lc3NhZ2VfZ3JvdXBzICkgKSB8fCBcSVBTXFNldHRpbmdzOjppKCktPmVkaXRvck1lc3NhZ2VfZ3JvdXBzID09ICdhbGwnfX0NCiAgICAgICAgPGRpdiBjbGFzcz0iaXBzTWVzc2FnZSBpcHNNZXNzYWdlX3tzZXR0aW5nPSJlZGl0b3JNZXNzYWdlX3R5cGUifSBlZGl0b3JNZXNzYWdlIj4NCiAgICAgICAgICAgIHtsYW5nPSJlZGl0b3JNZXNzYWdlX21lc3NhZ2VDb250ZW50TGFuZyJ9DQogICAgICAgIDwvZGl2Pg0KICAgIHt7ZW5kaWZ9fQ0Ke3tlbmRpZn19</html></htmlFiles><cssFiles><css filename="editorMessage.css">LyoqDQoJKiBFZGl0b3IgTWVzc2FnZQ0KCSogQnkgRm0gV2ViIChSZWNvdXNlKQ0KCSogaHR0cDovL2ZtLXdlYi5zdHVkaW8NCiovDQoNCi5pcHNNZXNzYWdlLmVkaXRvck1lc3NhZ2UgcCB7DQoJbWFyZ2luOiAwOw0KfQ==</css></cssFiles><jsFiles/><resourcesFiles/><lang><word key="editorMessage_messageContent" js="0">Message content</word><word key="editorMessage_messageContentLang" js="0"/><word key="editorMessage_messageContentPlaceholder" js="0">Type your message</word><word key="editorMessage_type" js="0">Message type</word><word key="editorMessage_typeInformation" js="0">Information</word><word key="editorMessage_typeSuccess" js="0">Success</word><word key="editorMessage_typeWarning" js="0">Warning</word><word key="editorMessage_typeError" js="0">Error</word><word key="editorMessage_groups" js="0">Who can see?</word><word key="editorMessage_forums" js="0">Forums to hide</word><word key="editorMessage_forums_desc" js="0"><![CDATA[Message in these forums <strong>will not be</strong> shown.]]></word></lang><versions><version long="30000" human="3.0.0"><![CDATA[//<?php
+
+
+/* To prevent PHP errors (extending class does not exist) revealing path */
+if ( !defined( '\IPS\SUITE_UNIQUE_KEY' ) )
+{
+	header( ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' ) . ' 403 Forbidden' );
+	exit;
+}
+
+/**
+ * 3.0.0 Upgrade Code
+ */
+class ips_plugins_setup_upg_30000
+{
+	/**
+	 * ...
+	 *
+	 * @return	array	If returns TRUE, upgrader will proceed to next step. If it returns any other value, it will set this as the value of the 'extra' GET parameter and rerun this step (useful for loops)
+	 */
+	public function step1()
+	{
+		
+
+		return TRUE;
+	}
+	
+	// You can create as many additional methods (step2, step3, etc.) as is necessary.
+	// Each step will be executed in a new HTTP request
+}]]></version></versions></plugin>
